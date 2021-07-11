@@ -271,9 +271,6 @@ fn main() {
     let vertices = [red_rect.vertices(), green_rect.vertices(), blue_rect.vertices()].concat();
     let indices = [red_rect.indices(0), green_rect.indices(1), blue_rect.indices(2)].concat();
 
-    println!("{:?}", vertices);
-    println!("{:?}", indices);
-
     let vertex_buffer = CpuAccessibleBuffer::from_iter(
         device.clone(),
         BufferUsage::vertex_buffer(),
@@ -287,7 +284,7 @@ fn main() {
         false,
         indices.iter().cloned()
     ).unwrap();
-    
+
     // Actual framebuffers to draw to
     let mut framebuffers = window_size_dependent_setup(&images, render_pass.clone(), &mut dynamic_state);
 

@@ -203,9 +203,9 @@ fn main() {
     );
 
     // Create textures for the rectangles
-    let (red_texture, red_tex_future) = load_texture("src/red.png", queue.clone());
-    let (blue_texture, green_tex_future) = load_texture("src/green.png", queue.clone());
-    let (green_texture, blue_tex_future) = load_texture("src/blue.png", queue.clone());
+    let red_texture = load_texture("src/red.png", queue.clone());
+    let blue_texture = load_texture("src/green.png", queue.clone());
+    let green_texture = load_texture("src/blue.png", queue.clone());
 
     let sampler = Sampler::new(
         device.clone(),
@@ -278,11 +278,6 @@ fn main() {
 
     // Actual framebuffers to draw to
     let mut framebuffers = window_size_dependent_setup(&images, render_pass.clone(), &mut dynamic_state);
-
-    // Make sure textures are fully uploaded
-    red_tex_future.flush().unwrap();
-    green_tex_future.flush().unwrap();
-    blue_tex_future.flush().unwrap();
 
     // Rendering Loop
     let mut recreate_swapchain = false;
@@ -394,10 +389,7 @@ fn main() {
     });
 }
 
-fn load_texture(path: &str, queue: Arc<Queue>) -> (
-    Arc<ImageView<Arc<ImmutableImage>>>,
-    CommandBufferExecFuture<NowFuture, PrimaryAutoCommandBuffer>
-    ) {
+fn load_texture(path: &str, queue: Arc<Queue>) -> Arc<ImageView<Arc<ImmutableImage>>> {
     // Initialize png decoder
     let decoder = png::Decoder::new(File::open(path).unwrap());
     let (info, mut reader) = decoder.read_info().unwrap();
@@ -422,7 +414,7 @@ fn load_texture(path: &str, queue: Arc<Queue>) -> (
         queue
     ).unwrap();
 
-    (ImageView::new(image).unwrap(), future)
+    ImageView::new(image).unwrap()
 }
 
 fn window_size_dependent_setup(
